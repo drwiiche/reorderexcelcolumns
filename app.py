@@ -42,4 +42,4 @@ def reorder_columns():
     return "File saved successfully!"
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False, host="0.0.0.0")
