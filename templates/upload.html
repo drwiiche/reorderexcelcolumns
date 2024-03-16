@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reorder and Select Columns</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 h-screen flex flex-col justify-center items-center">
+    <h2 class="text-2xl font-bold mb-4">Column Names:</h2>
+
+    <form action="/reorder" method="post" id="reorderForm" class="w-3/4 max-w-lg">
+        <input type="hidden" name="filename" value="{{ filename }}">
+
+        <ul id="sortable" class="list-disc pl-8">
+            {% for col in columns %}
+                <li class="ui-state-default flex items-center justify-between bg-white rounded p-2 mb-2">
+                    <span class="ui-icon ui-icon-arrowthick-2-n-s mr-2"></span>
+                    <input type="checkbox" name="selected-columns" value="{{ col }}" checked class="mr-2 float-right">
+                    {{ col }}
+                    <input type="hidden" name="column" value="{{ col }}">
+                </li>
+            {% endfor %}
+        </ul>
+
+        <div class="flex justify-between mt-4">
+            <button type="button" id="checkAllBtn" class="bg-green-500 text-white font-semibold px-4 py-2 rounded mr-2">
+                Check All
+            </button>
+            <button type="button" id="checkNoneBtn" class="bg-red-500 text-white font-semibold px-4 py-2 rounded">
+                Check None
+            </button>
+        </div>
+
+        <button type="submit" class="bg-blue-500 text-white font-semibold px-4 py-2 rounded mt-4">
+            Save
+        </button>
+    </form>
+
+    <script>
+        $(function () {
+            $("#sortable").sortable();
+            $("#sortable").disableSelection();
+
+            $("#checkAllBtn").on("click", function () {
+                $("#sortable input[type='checkbox']").prop('checked', true);
+            });
+
+            $("#checkNoneBtn").on("click", function () {
+                $("#sortable input[type='checkbox']").prop('checked', false);
+            });
+
+            $("#reorderForm").submit(function () {
+                var columnOrder = [];
+                $("#sortable input[name='column']").each(function () {
+                    columnOrder.push($(this).val());
+                });
+                $(this).find("input[name='column']").remove();
+                columnOrder.forEach(function (column) {
+                    $(this).append("<input type='hidden' name='column' value='" + column + "'>");
+                }.bind(this));
+            });
+        });
+    </script>
+</body>
+
+</html>
